@@ -30,6 +30,19 @@ resource "aws_vpn_connection" "main" {
   # tunnel2_inside_cidr   = var.tunnel2_inside_cidr
   tunnel1_preshared_key = var.tunnel1_preshared_key
   # tunnel2_preshared_key = var.tunnel2_preshared_key
+  tunnel1_dpd_timeout_action      = "none"
+  tunnel2_dpd_timeout_action      = "none"
+  tunnel1_ike_versions            = ["ikev2"]
+  tunnel2_ike_versions            = ["ikev2"]
+  tunnel1_phase1_dh_group_numbers = [15]
+  tunnel2_phase1_dh_group_numbers = [15]
+  tunnel1_phase2_dh_group_numbers = [15]
+  tunnel2_phase2_dh_group_numbers = [15]
+  tunnel1_phase1_lifetime_seconds = 19800
+  tunnel1_phase1_encryption_algorithms = ["AES256-GCM-16"]
+  tunnel1_phase2_encryption_algorithms = ["AES256-GCM-16"]
+  tunnel1_phase1_integrity_algorithms = ["SHA2-256"]
+  tunnel1_phase2_integrity_algorithms = ["SHA2-256"]
 
   tags = merge({
     Name = "main-vpn-connection"
@@ -44,6 +57,20 @@ resource "aws_vpn_connection" "backup" {
   # tunnel2_inside_cidr   = var.tunnel2_inside_cidr
   tunnel1_preshared_key = var.tunnel2_preshared_key
   # tunnel2_preshared_key = var.tunnel2_preshared_key
+  tunnel1_dpd_timeout_action      = "none"
+  tunnel2_dpd_timeout_action      = "none"
+  tunnel1_ike_versions            = ["ikev2"]
+  tunnel2_ike_versions            = ["ikev2"]
+  tunnel1_phase1_dh_group_numbers = [15]
+  tunnel2_phase1_dh_group_numbers = [15]
+  tunnel1_phase2_dh_group_numbers = [15]
+  tunnel2_phase2_dh_group_numbers = [15]
+  tunnel1_phase1_lifetime_seconds = 19800
+  tunnel1_phase1_encryption_algorithms = ["AES256-GCM-16"]
+  tunnel1_phase2_encryption_algorithms = ["AES256-GCM-16"]
+  tunnel1_phase1_integrity_algorithms = ["SHA2-256"]
+  tunnel1_phase2_integrity_algorithms = ["SHA2-256"]
+
 
   tags = merge({
     Name = "backup-vpn-connection"
@@ -67,7 +94,7 @@ resource "cato_ipsec_site" "ipsec-site" {
           public_site_ip  = aws_vpn_connection.main.tunnel1_address
           private_cato_ip = var.primary_private_cato_ip
           private_site_ip = var.primary_private_site_ip
-          psk             = aws_vpn_connection.main.tunnel1_preshared_key
+          psk             = var.tunnel1_preshared_key
           last_mile_bw = {
             downstream = var.downstream_bw
             upstream   = var.upstream_bw
@@ -86,7 +113,7 @@ resource "cato_ipsec_site" "ipsec-site" {
           public_site_ip  = aws_vpn_connection.backup.tunnel1_address
           private_cato_ip = var.secondary_private_cato_ip
           private_site_ip = var.secondary_private_site_ip
-          psk             = aws_vpn_connection.backup.tunnel2_preshared_key
+          psk             = var.tunnel2_preshared_key
           last_mile_bw = {
             downstream = var.downstream_bw
             upstream   = var.upstream_bw
@@ -111,11 +138,11 @@ resource "cato_bgp_peer" "primary" {
   advertise_default_route  = false
   advertise_summary_routes = false
 
-  # bfd_settings = {
-  #   transmit_interval = 100
-  #   receive_interval  = 100
-  #   multiplier        = 10
-  # }
+  bfd_settings = {
+    transmit_interval = 1000
+    receive_interval  = 1000
+    multiplier        = 5
+  }
 }
 
 resource "cato_bgp_peer" "backup" {
@@ -130,9 +157,9 @@ resource "cato_bgp_peer" "backup" {
   advertise_default_route  = false
   advertise_summary_routes = false
 
-  # bfd_settings = {
-  #   transmit_interval = 100
-  #   receive_interval  = 100
-  #   multiplier        = 10
-  # }
+  bfd_settings = {
+    transmit_interval = 1000
+    receive_interval  = 1000
+    multiplier        = 5
+  }
 }

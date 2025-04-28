@@ -12,7 +12,7 @@ module "ipsec-aws-tgw" {
   source                                = "./modules/test"
   account_id                            = var.account_id
   token                                 = var.token
-  aws_transit_gateway_id                = "tgw-somelongguid"
+  aws_transit_gateway_id                = "tgw-053e8d53e57c17742"
   region                                = var.region
   aws_cgw_bgp_asn                       = 64512 #ASN of TGW //TODO: Change the Var Name
   cato_bgp_asn                          = 65001
