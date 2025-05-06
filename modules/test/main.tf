@@ -78,6 +78,43 @@ resource "aws_vpn_connection" "backup" {
 
 }
 
+//TODO:  Add Direct Ranges for the BGP Peers in the Site to Allow BGP to Come up
+// Ref: conversation with Robert Goodall: 
+// youll need to add in direct ranges covering the BGP subnets for the IPsec BGP to work
+// Per Conversation with Rob Pfrogner Isn't needed. 
+
+
+resource "cato_network_range" "bgp-primary" {
+  site_id = cato_ipsec_site.ipsec-site.id
+  name = "bgp-primary"
+  range_type = "Direct"
+  subnet = var.tunnel1_inside_cidr
+  interface_id = "159023"
+  local_ip = var.primary_private_cato_ip
+}
+
+resource "cato_network_range" "bgp-secondary" {
+  site_id = cato_ipsec_site.ipsec-site.id
+  name = "bgp-secondary"
+  range_type = "Direct"
+  subnet = var.tunnel2_inside_cidr
+  interface_id = "159023"
+  local_ip = var.secondary_private_cato_ip
+}
+
+// Doesn't work with IPSEC Sites? - Provider is trying to pass lan socket interface 
+# 2025-05-05T13:47:56.716-0500 [DEBUG] provider.terraform-provider-cato: 2025/05/05 13:47:56 [DEBUG] POST https://api.catonetworks.com/api/v1/graphql2
+# 2025-05-05T13:47:57.506-0500 [ERROR] provider.terraform-provider-cato: Response contains error diagnostic: @module=sdk.proto diagnostic_summary="Cato API SiteAddNetworkRange error" tf_proto_version=6.6 tf_provider_addr=registry.terraform.io/catonetworks/cato tf_req_id=51aadca1-85ba-e0fd-f513-577d094afe4f tf_rpc=ApplyResourceChange @caller=/Users/justinrichert/git/work/cato/terraform-provider-cato/vendor/github.com/hashicorp/terraform-plugin-go/tfprotov6/internal/diag/diagnostics.go:58 diagnostic_detail="{"networkErrors":null,"graphqlErrors":[{"message":"lan socket interface with id:  not found","path":["site","addNetworkRange"]}]}" diagnostic_severity=ERROR tf_resource_type=cato_network_range timestamp=2025-05-05T13:47:57.506-0500
+# 2025-05-05T13:47:57.520-0500 [DEBUG] State storage *statemgr.Filesystem declined to persist a state snapshot
+# 2025-05-05T13:47:57.520-0500 [ERROR] vertex "module.ipsec-aws-tgw.cato_network_range.bgp-primary" error: Cato API SiteAddNetworkRange error
+
+## API Call wants Local IP, But GUI Doesn't: 
+# curl -k -X POST -H "Accept: application/json" -H "Content-Type: application/json"  -H "x-API-Key: ********************************" 'https://api.catonetworks.com/api/v1/graphql2' --data '{"query":"mutation sitesAddNetworkRange ( $lanSocketInterfaceId:ID! $addNetworkRangeInput:AddNetworkRangeInput! $accountId:ID! ) { sites ( accountId:$accountId ) {   addNetworkRange ( lanSocketInterfaceId:$lanSocketInterfaceId  input:$addNetworkRangeInput  )  { networkRangeId   }   }  }","variables":{"accountId":"14881","addNetworkRangeInput":{"localIp":"169.254.100.2","name":"bgp-primary","rangeType":"Direct","subnet":"169.254.100.0/30"},"lanSocketInterfaceId":"159023"},"operationName":"sitesAddNetworkRange"}'
+# GUI Doesn't ask for a LAN IP... WHY NOT?!?!?!!?! 
+#
+
+
+
 resource "cato_ipsec_site" "ipsec-site" {
   name                 = var.site_name
   site_type            = var.site_type
@@ -126,40 +163,42 @@ resource "cato_ipsec_site" "ipsec-site" {
   }
 }
 
-resource "cato_bgp_peer" "primary" {
-  site_id                  = cato_ipsec_site.ipsec-site.id
-  name                     = "Primary Peering"
-  cato_asn                 = var.cato_bgp_asn
-  peer_asn                 = var.aws_cgw_bgp_asn
-  peer_ip                  = var.primary_private_site_ip
-  metric                   = 100
-  default_action           = "ACCEPT"
-  advertise_all_routes     = true
-  advertise_default_route  = false
-  advertise_summary_routes = false
 
-  bfd_settings = {
-    transmit_interval = 1000
-    receive_interval  = 1000
-    multiplier        = 5
-  }
-}
 
-resource "cato_bgp_peer" "backup" {
-  site_id                  = cato_ipsec_site.ipsec-site.id
-  name                     = "Secondary Peering"
-  cato_asn                 = var.cato_bgp_asn
-  peer_asn                 = var.aws_cgw_bgp_asn
-  peer_ip                  = var.secondary_private_site_ip
-  metric                   = 150
-  default_action           = "ACCEPT"
-  advertise_all_routes     = true
-  advertise_default_route  = false
-  advertise_summary_routes = false
+# resource "cato_bgp_peer" "primary" {
+#   site_id                  = cato_ipsec_site.ipsec-site.id
+#   name                     = "Primary Peering"
+#   cato_asn                 = var.cato_bgp_asn
+#   peer_asn                 = var.aws_cgw_bgp_asn
+#   peer_ip                  = var.primary_private_site_ip
+#   metric                   = 100
+#   default_action           = "ACCEPT"
+#   advertise_all_routes     = true
+#   advertise_default_route  = false
+#   advertise_summary_routes = false
 
-  bfd_settings = {
-    transmit_interval = 1000
-    receive_interval  = 1000
-    multiplier        = 5
-  }
-}
+#   bfd_settings = {
+#     transmit_interval = 1000
+#     receive_interval  = 1000
+#     multiplier        = 5
+#   }
+# }
+
+# resource "cato_bgp_peer" "backup" {
+#   site_id                  = cato_ipsec_site.ipsec-site.id
+#   name                     = "Secondary Peering"
+#   cato_asn                 = var.cato_bgp_asn
+#   peer_asn                 = var.aws_cgw_bgp_asn
+#   peer_ip                  = var.secondary_private_site_ip
+#   metric                   = 150
+#   default_action           = "ACCEPT"
+#   advertise_all_routes     = true
+#   advertise_default_route  = false
+#   advertise_summary_routes = false
+
+#   bfd_settings = {
+#     transmit_interval = 1000
+#     receive_interval  = 1000
+#     multiplier        = 5
+#   }
+# }
