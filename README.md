@@ -43,7 +43,7 @@ provider "cato" {
 }
 
 module "ipsec-aws-tgw" {
-  source                              = "catonetworks/ipsec-aws-tgw/cato"
+  source                              = "catonetworks/ipsec-aws-transit-gateway/cato"
   account_id                          = var.account_id
   token                               = var.token
   aws_transit_gateway_id              = "tgw-01234567890abcdef"
