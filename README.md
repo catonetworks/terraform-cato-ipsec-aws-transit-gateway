@@ -6,7 +6,7 @@ Requires an aws transit gateway ID (tgw_id) to connect to.,
 ## NOTE
 - For help with finding exact sytax to match site location for city, state_name, country_name and timezone, please refer to the [cato_siteLocation data source](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/data-sources/siteLocation).
 - For help with finding a license id to assign, please refer to the [cato_licensingInfo data source](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/data-sources/licensingInfo).
-- You will need to provide a primary and secondary allocated IP Address from the Cato Console for Cato to build the tunnel with. 
+- You will need to provide a primary and secondary allocated IP Address from the Cato Console for Cato to build the tunnels with. 
 
 
 ## Usage
