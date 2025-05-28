@@ -14,17 +14,17 @@ Requires an aws transit gateway ID (tgw_id) to connect to.,
 ```hcl
 variable "token" {
   description = "Cato API Token - Use Env Var TF_VAR_token=<token>"
-  type        = "string"
+  type        = string
 }
 
 variable "account_id" {  
   description = "Cato Account ID - Use Env Var TF_VAR_account_id=<accountid>"
-  type        = "string"
+  type        = string
 }
 
 variable "baseurl" {
   description = "Cato API Base URL - Use Env Var TF_VAR_baseurl=<baseurl>"
-  type        = "string"
+  type        = string
 }
 
 variable "region" {
