@@ -1,4 +1,4 @@
-#Cato IPSEC Site AWS Transit Gateway Module 
+# Cato IPSEC Site AWS Transit Gateway Module 
 
 Terraform module which creates a Cato IPSEC Site and connects it to a already created AWS Transit Gateway
 Requires an aws transit gateway ID (tgw_id) to connect to., 
