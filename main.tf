@@ -152,14 +152,14 @@ resource "cato_bgp_peer" "primary" {
   advertise_all_routes     = var.cato_primary_bgp_advertise_all
   advertise_default_route  = var.cato_primary_bgp_advertise_default_route
   advertise_summary_routes = var.cato_primary_bgp_advertise_summary_route
-  md5_auth_key             = ""
+  md5_auth_key             = "" #Inserting Blank Value to Avoid State Changes 
 
   bfd_settings = {
     transmit_interval = var.cato_primary_bgp_bfd_transmit_interval
     receive_interval  = var.cato_primary_bgp_bfd_receive_interval
     multiplier        = var.cato_primary_bgp_bfd_multiplier
   }
-
+  # Inserting Ignore to avoid API and TF Fighting over a Null Value 
   lifecycle {
     ignore_changes = [
       summary_route
@@ -178,7 +178,7 @@ resource "cato_bgp_peer" "backup" {
   advertise_all_routes     = var.cato_secondary_bgp_advertise_all
   advertise_default_route  = var.cato_secondary_bgp_advertise_default_route
   advertise_summary_routes = var.cato_secondary_bgp_advertise_summary_route
-  md5_auth_key             = ""
+  md5_auth_key             = "" #Inserting Blank Value to Avoid State Changes 
 
   bfd_settings = {
     transmit_interval = var.cato_secondary_bgp_bfd_transmit_interval
