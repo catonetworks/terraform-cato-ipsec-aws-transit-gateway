@@ -85,6 +85,13 @@ module "ipsec-aws-tgw" {
 }
 ```
 
+## Diagram
+<details>
+<summary>Show Diagram</summary>
+<img src=./images/terraform-cato-ipsec-transitgateway.png>
+</details>
+
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
