@@ -145,7 +145,7 @@ resource "cato_bgp_peer" "primary" {
   site_id                  = cato_ipsec_site.ipsec-site.id
   name                     = var.cato_primary_bgp_peer_name == null ? "${var.site_name}-primary-bgp-peer" : var.cato_primary_bgp_peer_name
   cato_asn                 = var.cato_bgp_asn
-  peer_asn                 = var.aws_cgw_bgp_asn
+  peer_asn                 = data.aws_ec2_transit_gateway.this.amazon_side_asn
   peer_ip                  = var.primary_private_site_ip
   metric                   = var.cato_primary_bgp_metric
   default_action           = var.cato_primary_bgp_default_action
@@ -171,7 +171,7 @@ resource "cato_bgp_peer" "backup" {
   site_id                  = cato_ipsec_site.ipsec-site.id
   name                     = var.cato_secondary_bgp_peer_name == null ? "${var.site_name}-secondary-bgp-peer" : var.cato_secondary_bgp_peer_name
   cato_asn                 = var.cato_bgp_asn
-  peer_asn                 = var.aws_cgw_bgp_asn
+  peer_asn                 = data.aws_ec2_transit_gateway.this.amazon_side_asn
   peer_ip                  = var.secondary_private_site_ip
   metric                   = var.cato_secondary_bgp_metric
   default_action           = var.cato_secondary_bgp_default_action

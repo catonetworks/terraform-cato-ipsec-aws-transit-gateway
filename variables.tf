@@ -79,11 +79,6 @@ variable "cato_bgp_asn" {
   type        = string
 }
 
-variable "aws_cgw_bgp_asn" {
-  description = "AWS Customer Gateway BGP ASN"
-  type        = string
-}
-
 variable "cato_primary_gateway_ip_address" {
   description = <<EOF
   Primary Allocated IP for Cato to build the tunnel with.

@@ -48,7 +48,6 @@ module "ipsec-aws-tgw" {
   token                               = var.token
   aws_transit_gateway_id              = "tgw-01234567890abcdef"
   region                              = var.region
-  aws_cgw_bgp_asn                     = 64512 
   cato_bgp_asn                        = 65001
   cato_primary_gateway_ip_address     = "x.x.x.x"
   cato_secondary_gateway_ip_address   = "y.y.y.y"
@@ -92,14 +91,13 @@ module "ipsec-aws-tgw" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_cato"></a> [cato](#requirement\_cato) | 0.0.23 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_cato"></a> [cato](#provider\_cato) | 0.0.23 |
+| <a name="provider_cato"></a> [cato](#provider\_cato) | n/a |
 
 ## Modules
 
@@ -113,19 +111,18 @@ No modules.
 | [aws_customer_gateway.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/customer_gateway) | resource |
 | [aws_vpn_connection.backup](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpn_connection) | resource |
 | [aws_vpn_connection.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpn_connection) | resource |
-| [cato_bgp_peer.backup](https://registry.terraform.io/providers/terraform-providers/cato/0.0.23/docs/resources/bgp_peer) | resource |
-| [cato_bgp_peer.primary](https://registry.terraform.io/providers/terraform-providers/cato/0.0.23/docs/resources/bgp_peer) | resource |
-| [cato_ipsec_site.ipsec-site](https://registry.terraform.io/providers/terraform-providers/cato/0.0.23/docs/resources/ipsec_site) | resource |
+| [cato_bgp_peer.backup](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/resources/bgp_peer) | resource |
+| [cato_bgp_peer.primary](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/resources/bgp_peer) | resource |
+| [cato_ipsec_site.ipsec-site](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/resources/ipsec_site) | resource |
 | [aws_ec2_transit_gateway.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ec2_transit_gateway) | data source |
-| [cato_allocatedIp.primary](https://registry.terraform.io/providers/terraform-providers/cato/0.0.23/docs/data-sources/allocatedIp) | data source |
-| [cato_allocatedIp.secondary](https://registry.terraform.io/providers/terraform-providers/cato/0.0.23/docs/data-sources/allocatedIp) | data source |
+| [cato_allocatedIp.primary](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/data-sources/allocatedIp) | data source |
+| [cato_allocatedIp.secondary](https://registry.terraform.io/providers/catonetworks/cato/latest/docs/data-sources/allocatedIp) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | Cato account ID | `any` | n/a | yes |
-| <a name="input_aws_cgw_bgp_asn"></a> [aws\_cgw\_bgp\_asn](#input\_aws\_cgw\_bgp\_asn) | AWS Customer Gateway BGP ASN | `string` | n/a | yes |
 | <a name="input_aws_transit_gateway_id"></a> [aws\_transit\_gateway\_id](#input\_aws\_transit\_gateway\_id) | AWS Transit Gateway ID | `string` | n/a | yes |
 | <a name="input_baseurl"></a> [baseurl](#input\_baseurl) | Cato API base URL | `string` | `"https://api.catonetworks.com/api/v1/graphql2"` | no |
 | <a name="input_cato_bgp_asn"></a> [cato\_bgp\_asn](#input\_cato\_bgp\_asn) | Cato BGP ASN | `string` | n/a | yes |
